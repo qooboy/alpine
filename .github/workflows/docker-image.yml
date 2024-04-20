@@ -1,0 +1,27 @@
+name: Build and Use Docker Image
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 克隆代码
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      # 配置Docker环境
+      - name: Set up Docker
+        uses: docker/setup-docker@v2
+
+      # 构建Docker镜像
+      - name: Build Docker image
+        run: docker build -t my-docker-image .
+
+      # 运行Docker容器
+      - name: Run Docker container
+        run: docker run my-docker-image
