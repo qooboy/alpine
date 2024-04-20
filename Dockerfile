@@ -1,20 +1,25 @@
-# 使用 arm32v7/alpine 作为基础镜像
-FROM arm32v7/alpine:latest
+name: Docker Image CI
 
-# 作者信息
-LABEL maintainer="yourname"
+on:
+  push:
+    paths:
+      - 'Dockerfile'  # 监听 Dockerfile 的变化
 
-# 安装必要的软件包
-RUN apk --no-cache add \
-    bash \
-    curl \
-    # 添加其他你需要的软件包...
+jobs:
+  build:
+    runs-on: ubuntu-latest
 
-# 设置工作目录
-WORKDIR /app
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
 
-# 将本地文件复制到镜像中
-COPY . .
+    - name: Login to Docker Hub
+      uses: docker/login-action@v2
+      with:
+        username: ${{ secrets.DOCKER_HUB_USERNAME }}
+        password: ${{ secrets.DOCKER_HUB_PASSWORD }}
 
-# 定义容器启动时执行的命令
-CMD ["bash"]
+    - name: Build and push Docker image
+      run: |
+        docker build -t yourusername/yourimage:latest .
+        docker push yourusername/yourimage:latest
